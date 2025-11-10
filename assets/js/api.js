@@ -14,11 +14,11 @@
  * (por exemplo, em ambiente Node.js sem DOM).
  */
 function atualizarTema() {
+  if (typeof document === "undefined") return;
+
   const hora = new Date().getHours();
-  if (typeof document !== "undefined") {
-    document.body.classList.toggle("night", hora >= 18 || hora < 6);
-    document.body.classList.toggle("day", hora >= 6 && hora < 18);
-  }
+  document.body.classList.toggle("night", hora >= 18 || hora < 6);
+  document.body.classList.toggle("day", hora >= 6 && hora < 18);
 }
 
 /**
@@ -95,4 +95,105 @@ async function buscarClimaPorCidade(city) {
   return weatherData.current_weather;
 }
 
-module.exports = { buscarClimaPorCidade, atualizarTema };
+/**
+ * 🎨 Conecta a interface (HTML) com a API de clima.
+ * Gerencia eventos de formulário, exibe os resultados e erros.
+ */
+if (typeof document !== "undefined") {
+  document.addEventListener("DOMContentLoaded", () => {
+    atualizarTema(); // Aplica o tema inicial
+
+    const form = document.getElementById("weather-form");
+    const cityInput = document.getElementById("city-input");
+    const resultDiv = document.getElementById("weather-result");
+    const errorMessage = document.getElementById("error-message");
+    const cityName = document.getElementById("city-name");
+    const temperature = document.getElementById("temperature");
+    const conditions = document.getElementById("conditions");
+    const dateTime = document.getElementById("date-time");
+    const weatherIcon = document.getElementById("weather-icon");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const city = cityInput.value.trim();
+
+      errorMessage.classList.add("hidden");
+      resultDiv.classList.add("hidden");
+
+      if (!city) {
+        errorMessage.textContent = "Por favor, insira o nome de uma cidade.";
+        errorMessage.classList.remove("hidden");
+        return;
+      }
+
+      try {
+        // Busca os dados de clima e também os dados de localização formatados
+        const geoResponse = await fetch(
+          `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=pt&format=json`
+        );
+        const geoData = await geoResponse.json();
+
+        if (!geoData.results || geoData.results.length === 0) {
+          throw new Error("Cidade não encontrada.");
+        }
+
+        const { name: nomeFormatado, country } = geoData.results[0];
+
+        // Agora busca o clima usando as coordenadas
+        const { latitude, longitude } = geoData.results[0];
+        const weatherResponse = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`
+        );
+        const weatherData = await weatherResponse.json();
+
+        const code = weatherData.current_weather.weathercode;
+        const temp = weatherData.current_weather.temperature;
+        const horaConsulta = new Date();
+
+        // Mapeia códigos do Open-Meteo para ícones e textos
+        const weatherMap = {
+          0: { text: "Céu limpo", icon: "wi-day-sunny" },
+          1: { text: "Principalmente limpo", icon: "wi-day-sunny-overcast" },
+          2: { text: "Parcialmente nublado", icon: "wi-day-cloudy" },
+          3: { text: "Nublado", icon: "wi-cloudy" },
+          45: { text: "Nevoeiro", icon: "wi-fog" },
+          51: { text: "Garoa leve", icon: "wi-sprinkle" },
+          61: { text: "Chuva leve", icon: "wi-showers" },
+          71: { text: "Neve leve", icon: "wi-snow" },
+          95: { text: "Trovoadas", icon: "wi-thunderstorm" },
+        };
+
+        const weatherInfo = weatherMap[code] || { text: "Condição desconhecida", icon: "wi-na" };
+
+        cityName.textContent = `${nomeFormatado}, ${country}`;
+        temperature.textContent = `Temperatura: ${temp}°C`;
+        conditions.textContent = weatherInfo.text;
+        weatherIcon.className = `wi ${weatherInfo.icon}`;
+
+        // Data e hora completas
+        const dataFormatada = horaConsulta.toLocaleDateString("pt-BR", {
+          weekday: "long",
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        });
+        const horaFormatada = horaConsulta.toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        dateTime.textContent = `${dataFormatada}, ${horaFormatada}`;
+
+        atualizarTema();
+        resultDiv.classList.remove("hidden");
+      } catch (error) {
+        errorMessage.textContent = "Erro: " + error.message;
+        errorMessage.classList.remove("hidden");
+      }
+    });
+  });
+}
+
+// Exporta para testes (Jest)
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { buscarClimaPorCidade, atualizarTema };
+}
