@@ -7,22 +7,38 @@
 }
 
 body {
-  background: linear-gradient(135deg, #89f7fe, #66a6ff);
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  transition: background 0.6s ease;
   color: #333;
 }
 
+/* Fundo claro (dia) */
+body.day {
+  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  color: #222;
+}
+
+/* Fundo escuro (noite) */
+body.night {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  color: #f0f0f0;
+}
+
 .container {
-  background: white;
+  background: rgba(255, 255, 255, 0.9);
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   text-align: center;
   width: 90%;
   max-width: 400px;
+}
+
+body.night .container {
+  background: rgba(0, 0, 0, 0.4);
 }
 
 h1 {
@@ -60,9 +76,14 @@ button:hover {
 
 .weather-result {
   margin-top: 1rem;
-  background: #f0f4ff;
+  background: rgba(240, 244, 255, 0.8);
   padding: 1rem;
   border-radius: 8px;
+}
+
+.weather-result i {
+  font-size: 3rem;
+  margin: 0.5rem 0;
 }
 
 .hidden {
@@ -70,7 +91,7 @@ button:hover {
 }
 
 .error {
-  color: red;
+  color: #ff3b3b;
   font-weight: bold;
   margin-top: 1rem;
 }

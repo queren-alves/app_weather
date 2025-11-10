@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Previsão do Tempo</title>
   <link rel="stylesheet" href="assets/css/style.css" />
+  <!-- Biblioteca de ícones Weather Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css"
+  />
 </head>
 <body>
   <div class="container">
@@ -22,8 +27,10 @@
 
     <div id="weather-result" class="weather-result hidden">
       <h2 id="city-name"></h2>
+      <i id="weather-icon" class="wi"></i>
       <p id="temperature"></p>
       <p id="conditions"></p>
+      <p id="date-time"></p>
     </div>
 
     <p id="error-message" class="error hidden"></p>
