@@ -1,14 +1,33 @@
-
 # Aplicativo de Previsão do Tempo
 
-Aplicação web simples de monitoramento climático que consome a **API Open-Meteo** para exibir condições meteorológicas em tempo real a partir do nome de uma cidade.
+<br/>
 
-<br>
+<div align="center">
+	<img src="https://imgur.com/q6ZRYV4.png" title="source: imgur.com" />
+</div>
+<br/>
+
+---
+
+<div align="center">
+  <img src="https://img.shields.io/github/repo-size/queren-alves/app_weather?style=flat-square" />
+  <img src="https://img.shields.io/badge/HTML-5-orange.svg" />
+  <img src="https://img.shields.io/badge/CSS-3-purple.svg" />
+  <img src="https://img.shields.io/badge/JavaScript-ES6+-yellow.svg" />
+  <img src="https://img.shields.io/github/last-commit/queren-alves/app_weather?style=flat-square" />
+  <img src="https://img.shields.io/github/issues/queren-alves/app_weather?style=flat-square" />
+  <img src="https://img.shields.io/github/issues-pr/queren-alves/app_weather?style=flat-square" />
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg">
+</div>
+
+---
+
+<br />
 
 ## 1. Visão Geral
 
 O projeto de **Previsão do Tempo** foi desenvolvido em **HTML, CSS e JavaScript puro**, com foco em aprendizado e boas práticas de integração com APIs externas.  
-A aplicação permite consultar dados meteorológicos, tratar diferentes cenários de erro e alternar automaticamente o modo **diurno/noturno** com base no horário local da consulta.
+A aplicação permite consultar dados meteorológicos através da **API Open-Meteo**, tratar diferentes cenários de erro e alternar automaticamente o modo **diurno/noturno** com base no horário local da consulta.
 
 <br>
 
