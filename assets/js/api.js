@@ -116,6 +116,7 @@ if (typeof document !== "undefined") {
     const cityInput = document.getElementById("city-input");
     const resultDiv = document.getElementById("weather-result");
     const errorMessage = document.getElementById("error-message");
+    const loadingMessage = document.getElementById("loading-message");
     const cityName = document.getElementById("city-name");
     const temperature = document.getElementById("temperature");
     const conditions = document.getElementById("conditions");
@@ -128,11 +129,12 @@ if (typeof document !== "undefined") {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const city = cityInput.value.trim();
-
+      loadingMessage.classList.remove("hidden");
       errorMessage.classList.add("hidden");
       resultDiv.classList.add("hidden");
 
       if (!city) {
+        loadingMessage.classList.add("hidden");
         errorMessage.textContent = "Por favor, insira o nome de uma cidade.";
         errorMessage.classList.remove("hidden");
         return;
@@ -140,6 +142,8 @@ if (typeof document !== "undefined") {
 
       try {
         const dados = await buscarClimaPorCidade(city);
+        errorMessage.textContent = "";
+        errorMessage.classList.add("hidden");
 
         const code = dados.current.weathercode;
         const temp = dados.current.temperature;
@@ -224,7 +228,9 @@ if (typeof document !== "undefined") {
 
         atualizarTema();
         resultDiv.classList.remove("hidden");
+        loadingMessage.classList.add("hidden");
       } catch (error) {
+        loadingMessage.classList.add("hidden");
         errorMessage.textContent = "Erro: " + error.message;
         errorMessage.classList.remove("hidden");
       }

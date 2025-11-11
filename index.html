@@ -1,54 +1,116 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Previsão do Tempo</title>
-  <link rel="stylesheet" href="assets/css/style.css" />
-  <!-- Biblioteca de ícones Weather Icons -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
-  <div class="container">
-    <h1>🌤️ Previsão do Tempo</h1>
-
-    <form id="weather-form">
-      <input
-        type="text"
-        id="city-input"
-        placeholder="Digite o nome da cidade"
-        required
-      />
-      <button type="submit">Buscar</button>
-    </form>
-
-    <div id="weather-result" class="weather-result hidden">
-      <h2 id="city-name"></h2>
-      <i id="weather-icon" class="wi"></i>
-      <p id="temperature"></p>
-      <p id="conditions"></p>
-      <p id="date-time"></p>
-
-      <div class="extra-info">
-        <p><i class="wi wi-humidity"></i> Umidade: <span id="humidity">--%</span></p>
-        <p><i class="wi wi-strong-wind"></i> Vento: <span id="wind-speed">-- km/h</span></p>
-        <p><i class="wi wi-raindrops"></i> Precipitação: <span id="precipitation">-- mm</span></p>
-      </div>
-
-      <div id="forecast-container" class="forecast-container">
-        <h3>📅 Próximos 5 dias</h3>
-        <div id="forecast" class="forecast-grid">
-          <!-- Previsão diária será exibida aqui futuramente -->
-        </div>
-      </div>
-    </div>
-
-    <p id="error-message" class="error hidden"></p>
+<body class="day">
+  <div class="background-animation">
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="stars"></div>
   </div>
 
+  <div id="container" class="container">
+    <header class="app-header">
+      <div class="header-content">
+        <div class="logo">
+          <i class="wi wi-day-sunny logo-icon"></i>
+          <span class="logo-text">Weather</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="search-section">
+      <form id="weather-form" class="weather-form">
+        <div class="search-container">
+          <i class="wi wi-day-sunny search-icon-left"></i>
+          <input type="text" id="city-input" class="city-input" placeholder="Buscar cidade..." required autocomplete="off">
+          <button type="submit" class="search-button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <div id="error-message" class="error-message"></div>
+    <div id="loading-message" class="hidden">Carregando previsão...</div>
+
+    <div id="weather-result" class="hidden">
+      <div class="main-weather-card">
+        <div class="weather-header">
+          <div class="location-wrapper">
+            <i class="wi wi-direction-up location-icon"></i>
+            <div class="location-details">
+              <h1 id="city-name" class="city-name">—</h1>
+              <p id="date-time" class="date-time">—</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="weather-content">
+          <div class="weather-visual">
+            <i id="weather-icon" class="wi weather-icon-main"></i>
+            <div class="weather-particles"></div>
+          </div>
+          
+          <div class="weather-data">
+            <div class="temperature-display">
+              <span id="temperature" class="temperature-value"></span>
+              <span class="temperature-unit"></span>
+            </div>
+            <p id="conditions" class="weather-condition">—</p>
+            
+            <div class="weather-details-grid">
+              <div class="detail-item">
+                <i class="wi wi-humidity detail-icon"></i>
+                <div class="detail-info">
+                  <span class="detail-label">Umidade</span>
+                  <span id="humidity" class="detail-value"></span>
+                </div>
+              </div>
+              
+              <div class="detail-item">
+                <i class="wi wi-strong-wind detail-icon"></i>
+                <div class="detail-info">
+                  <span class="detail-label">Vento</span>
+                  <span id="wind-speed" class="detail-value"></span>
+                </div>
+              </div>
+              
+              <div class="detail-item">
+                <i class="wi wi-raindrops detail-icon"></i>
+                <div class="detail-info">
+                  <span class="detail-label">Chuva</span>
+                  <span id="precipitation" class="detail-value"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="forecast-container">
+        <div class="forecast-header">
+          <h2 class="forecast-title">
+            <i class="wi wi-time-4"></i>
+            Próximos dias
+          </h2>
+        </div>
+        <div id="forecast" class="forecast-grid"></div>
+      </div>
+    </div>
+  </div>
   <script src="assets/js/api.js"></script>
 </body>
 </html>
