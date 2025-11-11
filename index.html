@@ -31,6 +31,19 @@
       <p id="temperature"></p>
       <p id="conditions"></p>
       <p id="date-time"></p>
+
+      <div class="extra-info">
+        <p><i class="wi wi-humidity"></i> Umidade: <span id="humidity">--%</span></p>
+        <p><i class="wi wi-strong-wind"></i> Vento: <span id="wind-speed">-- km/h</span></p>
+        <p><i class="wi wi-raindrops"></i> Precipitação: <span id="precipitation">-- mm</span></p>
+      </div>
+
+      <div id="forecast-container" class="forecast-container">
+        <h3>📅 Próximos 5 dias</h3>
+        <div id="forecast" class="forecast-grid">
+          <!-- Previsão diária será exibida aqui futuramente -->
+        </div>
+      </div>
     </div>
 
     <p id="error-message" class="error hidden"></p>

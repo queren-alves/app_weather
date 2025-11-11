@@ -34,7 +34,7 @@ body.night {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   text-align: center;
   width: 90%;
-  max-width: 400px;
+  max-width: 420px;
 }
 
 body.night .container {
@@ -86,6 +86,52 @@ button:hover {
   margin: 0.5rem 0;
 }
 
+.extra-info {
+  margin-top: 1rem;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+body.night .extra-info {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.extra-info p {
+  margin: 0.4rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.forecast-container {
+  margin-top: 1.5rem;
+}
+
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+
+.forecast-day {
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 8px;
+  padding: 0.6rem;
+  text-align: center;
+}
+
+body.night .forecast-day {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.forecast-day i {
+  font-size: 1.8rem;
+}
+
 .hidden {
   display: none;
 }
@@ -94,4 +140,52 @@ button:hover {
   color: #ff3b3b;
   font-weight: bold;
   margin-top: 1rem;
+}
+
+.forecast-container {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.forecast-day {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1rem;
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+  transition: transform 0.2s ease;
+}
+
+.forecast-day:hover {
+  transform: translateY(-5px);
+}
+
+.forecast-day p {
+  margin: 0.2rem 0;
+  font-size: 0.9rem;
+}
+
+.forecast-date {
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+
+body.day .forecast-day {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+body.night .forecast-day {
+  background: rgba(0, 0, 0, 0.3);
+  color: #f0f0f0;
+}
+
+.forecast-day i {
+  font-size: 2rem;
+  margin: 0.5rem 0;
 }

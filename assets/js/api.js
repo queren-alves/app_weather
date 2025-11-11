@@ -22,49 +22,32 @@ function atualizarTema() {
 }
 
 /**
- * Busca informações meteorológicas atuais de uma cidade,
- * utilizando a API pública do Open-Meteo.
+ * Busca informações meteorológicas atuais e previsão para 5 dias
+ * de uma cidade, utilizando a API pública do Open-Meteo.
  *
  * O processo ocorre em duas etapas:
  * 1️⃣ Busca de coordenadas (latitude/longitude) da cidade via API de geocodificação.  
- * 2️⃣ Consulta das condições climáticas atuais com base nas coordenadas obtidas.
+ * 2️⃣ Consulta das condições climáticas atuais e previsão de 5 dias.
  *
  * @async
  * @function buscarClimaPorCidade
+ * @description
+ * Busca informações meteorológicas atuais e previsão de 5 dias para uma cidade informada.
+ * Inclui variáveis adicionais: umidade, velocidade do vento e precipitação.
  *
- * @param {string} city - Nome da cidade a ser consultada.
- *
- * @returns {Promise<Object>} Retorna um objeto contendo os dados meteorológicos atuais:
- * ```json
- * {
- *   "temperature": 23.4,
- *   "weathercode": 1
- * }
- * ```
- *
- * @throws {Error} Se o nome da cidade for vazio.
- * @throws {Error} Se a cidade não for encontrada na API de geocodificação.
- * @throws {Error} Se ocorrer um erro de rede ou falha na resposta da API.
- * @throws {Error} Se o formato da resposta da API não contiver o campo `current_weather`.
- *
- * @example
- * // Exemplo de uso:
- * buscarClimaPorCidade("São Paulo")
- *   .then((dados) => {
- *     console.log(`Temperatura atual: ${dados.temperature}°C`);
- *   })
- *   .catch((erro) => {
- *     console.error("Erro ao buscar clima:", erro.message);
- *   });
+ * @param {string} cidade - Nome da cidade a ser consultada.
+ * @returns {Promise<Object>} Dados meteorológicos completos.
+ * @throws {Error} Se a cidade não for encontrada, a entrada estiver vazia, ou a API falhar.
  */
-async function buscarClimaPorCidade(city) {
-  if (!city || city.trim() === "") {
+
+async function buscarClimaPorCidade(cidade) {
+  if (!cidade || cidade.trim() === "") {
     throw new Error("Por favor, insira o nome de uma cidade.");
   }
 
-  // Buscar coordenadas
+  // 🔹 1. Buscar coordenadas da cidade
   const geoResponse = await fetch(
-    `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=pt&format=json`
+    `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cidade)}&count=1&language=pt&format=json`
   );
   const geoData = await geoResponse.json();
 
@@ -72,27 +55,53 @@ async function buscarClimaPorCidade(city) {
     throw new Error("Cidade não encontrada.");
   }
 
-  const { latitude, longitude } = geoData.results[0];
+  const { latitude, longitude, name, country } = geoData.results[0];
 
-  // Buscar dados meteorológicos
+  // 🔹 2. Buscar clima atual + previsão de 5 dias com variáveis adicionais
   const weatherResponse = await fetch(
-    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`
+  `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}` +
+    `&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weathercode` + // <-- adicionamos weathercode aqui
+    `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,relative_humidity_2m_max,relative_humidity_2m_min` + // <-- e aqui também
+    `&forecast_days=7&timezone=auto`
   );
 
-  if (!weatherResponse.ok) {
-    if (weatherResponse.status === 429) {
-      throw new Error("Limite de requisições da API excedido. Tente novamente mais tarde.");
-    }
-    throw new Error("Erro ao obter dados meteorológicos.");
+  if (weatherResponse.status === 429) {
+    throw new Error("Limite de requisições da API excedido. Tente novamente mais tarde.");
   }
 
   const weatherData = await weatherResponse.json();
 
-  if (!weatherData.current_weather) {
+  // 🔹 3. Validar formato esperado
+  if (!weatherData.current || !weatherData.daily) {
     throw new Error("Formato inesperado de resposta da API.");
   }
 
-  return weatherData.current_weather;
+  // 🔹 4. Montar objeto final formatado
+  return {
+    city: `${name}, ${country}`,
+    current: {
+      temperature: weatherData.current.temperature_2m,
+      humidity: `${weatherData.current.relative_humidity_2m}%`,
+      precipitation: `${weatherData.current.precipitation ?? 0} mm`,
+      wind_speed: `${weatherData.current.wind_speed_10m} km/h`,
+      weathercode: weatherData.current.weathercode,
+      time: weatherData.current.time,
+    },
+    forecast: weatherData.daily.time.map((date, index) => ({
+      date,
+      max: weatherData.daily.temperature_2m_max[index],
+      min: weatherData.daily.temperature_2m_min[index],
+      precipitation: `${weatherData.daily.precipitation_sum[index]} mm`,
+      wind_max: `${weatherData.daily.wind_speed_10m_max[index]} km/h`,
+      humidity_avg: `${Math.round(
+        (weatherData.daily.relative_humidity_2m_max[index] +
+          weatherData.daily.relative_humidity_2m_min[index]) / 2
+      )}%`,
+      weathercode: weatherData.daily.weathercode
+      ? weatherData.daily.weathercode[index]
+      : null, 
+    })),
+  };
 }
 
 /**
@@ -101,7 +110,7 @@ async function buscarClimaPorCidade(city) {
  */
 if (typeof document !== "undefined") {
   document.addEventListener("DOMContentLoaded", () => {
-    atualizarTema(); // Aplica o tema inicial
+    atualizarTema();
 
     const form = document.getElementById("weather-form");
     const cityInput = document.getElementById("city-input");
@@ -112,6 +121,9 @@ if (typeof document !== "undefined") {
     const conditions = document.getElementById("conditions");
     const dateTime = document.getElementById("date-time");
     const weatherIcon = document.getElementById("weather-icon");
+    const humidityEl = document.getElementById("humidity");
+    const windEl = document.getElementById("wind-speed");
+    const precipEl = document.getElementById("precipitation");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -127,30 +139,12 @@ if (typeof document !== "undefined") {
       }
 
       try {
-        // Busca os dados de clima e também os dados de localização formatados
-        const geoResponse = await fetch(
-          `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=pt&format=json`
-        );
-        const geoData = await geoResponse.json();
+        const dados = await buscarClimaPorCidade(city);
 
-        if (!geoData.results || geoData.results.length === 0) {
-          throw new Error("Cidade não encontrada.");
-        }
+        const code = dados.current.weathercode;
+        const temp = dados.current.temperature;
+        const horaConsulta = new Date(dados.current.time);
 
-        const { name: nomeFormatado, country } = geoData.results[0];
-
-        // Agora busca o clima usando as coordenadas
-        const { latitude, longitude } = geoData.results[0];
-        const weatherResponse = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`
-        );
-        const weatherData = await weatherResponse.json();
-
-        const code = weatherData.current_weather.weathercode;
-        const temp = weatherData.current_weather.temperature;
-        const horaConsulta = new Date();
-
-        // Mapeia códigos do Open-Meteo para ícones e textos
         const weatherMap = {
           0: { text: "Céu limpo", icon: "wi-day-sunny" },
           1: { text: "Principalmente limpo", icon: "wi-day-sunny-overcast" },
@@ -163,14 +157,16 @@ if (typeof document !== "undefined") {
           95: { text: "Trovoadas", icon: "wi-thunderstorm" },
         };
 
-        const weatherInfo = weatherMap[code] || { text: "Condição desconhecida", icon: "wi-na" };
+        const weatherInfo = weatherMap[code] || {
+          text: "Condição desconhecida",
+          icon: "wi-na",
+        };
 
-        cityName.textContent = `${nomeFormatado}, ${country}`;
+        cityName.textContent = dados.city;
         temperature.textContent = `Temperatura: ${temp}°C`;
         conditions.textContent = weatherInfo.text;
         weatherIcon.className = `wi ${weatherInfo.icon}`;
 
-        // Data e hora completas
         const dataFormatada = horaConsulta.toLocaleDateString("pt-BR", {
           weekday: "long",
           day: "2-digit",
@@ -182,6 +178,49 @@ if (typeof document !== "undefined") {
           minute: "2-digit",
         });
         dateTime.textContent = `${dataFormatada}, ${horaFormatada}`;
+        humidityEl.textContent = dados.current.humidity || "--%";
+        windEl.textContent = dados.current.wind_speed || "-- km/h";
+        precipEl.textContent = dados.current.precipitation || "-- mm";
+
+        // 🌤️ Exibir previsão dos próximos 5 dias
+        const forecastContainer = document.getElementById("forecast");
+        forecastContainer.innerHTML = ""; 
+
+          const hoje = new Date();
+          const previsoesFuturas = dados.forecast
+            .filter(dia => new Date(dia.date).setHours(0, 0, 0, 0) > hoje.setHours(0, 0, 0, 0))
+            .slice(0, 5);
+
+          previsoesFuturas.forEach((dia) => {
+          const dateObj = new Date(dia.date);
+          const nomeDia = dateObj.toLocaleDateString("pt-BR", {
+            weekday: "short",
+          });
+          
+          const dataCurta = dateObj.toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+          });
+
+          const weatherCode = dia.weathercode;
+          const condition = weatherMap[weatherCode] || {
+            text: "Condição desconhecida",
+            icon: "wi-na",
+          };
+
+          const div = document.createElement("div");
+          div.classList.add("forecast-day");
+          div.innerHTML = `
+            <p class="forecast-date">${nomeDia}, ${dataCurta}</p>
+            <i class="wi ${condition.icon}"></i>
+            <p><strong>Máx:</strong> ${dia.max}°C</p>
+            <p><strong>Mín:</strong> ${dia.min}°C</p>
+            <p>💧 ${dia.humidity_avg}</p>
+            <p>🌬️ ${dia.wind_max}</p>
+            <p>☔ ${dia.precipitation}</p>
+          `;
+          forecastContainer.appendChild(div);
+        });
 
         atualizarTema();
         resultDiv.classList.remove("hidden");
