@@ -150,21 +150,42 @@ if (typeof document !== "undefined") {
         const horaConsulta = new Date(dados.current.time);
 
         const weatherMap = {
-          0: { text: "Céu limpo", icon: "wi-day-sunny" },
-          1: { text: "Principalmente limpo", icon: "wi-day-sunny-overcast" },
-          2: { text: "Parcialmente nublado", icon: "wi-day-cloudy" },
-          3: { text: "Nublado", icon: "wi-cloudy" },
-          45: { text: "Nevoeiro", icon: "wi-fog" },
-          51: { text: "Garoa leve", icon: "wi-sprinkle" },
-          61: { text: "Chuva leve", icon: "wi-showers" },
-          71: { text: "Neve leve", icon: "wi-snow" },
-          95: { text: "Trovoadas", icon: "wi-thunderstorm" },
-        };
+        0: { day: "wi-day-sunny", night: "wi-night-clear", text: "Céu limpo" },
+        1: { day: "wi-day-sunny-overcast", night: "wi-night-alt-partly-cloudy", text: "Principalmente limpo" },
+        2: { day: "wi-day-cloudy", night: "wi-night-alt-cloudy", text: "Parcialmente nublado" },
+        3: { day: "wi-cloudy", night: "wi-cloud", text: "Nublado" },
+        45: { day: "wi-fog", night: "wi-night-fog", text: "Nevoeiro" },
+        48: { day: "wi-fog", night: "wi-night-fog", text: "Nevoeiro com gelo" },
+        51: { day: "wi-sprinkle", night: "wi-night-alt-sprinkle", text: "Garoa leve" },
+        53: { day: "wi-sprinkle", night: "wi-night-alt-sprinkle", text: "Garoa moderada" },
+        55: { day: "wi-sprinkle", night: "wi-night-alt-sprinkle", text: "Garoa densa" },
+        56: { day: "wi-rain-mix", night: "wi-night-alt-rain-mix", text: "Garoa leve congelante" },
+        57: { day: "wi-rain-mix", night: "wi-night-alt-rain-mix", text: "Garoa densa congelante" },
+        61: { day: "wi-showers", night: "wi-night-alt-showers", text: "Chuva leve" },
+        63: { day: "wi-rain", night: "wi-night-alt-rain", text: "Chuva moderada" },
+        65: { day: "wi-rain-wind", night: "wi-night-alt-rain-wind", text: "Chuva forte" },
+        66: { day: "wi-rain-mix", night: "wi-night-alt-rain-mix", text: "Chuva leve congelante" },
+        67: { day: "wi-rain-mix", night: "wi-night-alt-rain-mix", text: "Chuva forte congelante" },
+        71: { day: "wi-snow", night: "wi-night-alt-snow", text: "Neve leve" },
+        73: { day: "wi-snow", night: "wi-night-alt-snow", text: "Neve moderada" },
+        75: { day: "wi-snow-wind", night: "wi-night-alt-snow-wind", text: "Neve intensa" },
+        77: { day: "wi-snowflake-cold", night: "wi-snowflake-cold", text: "Grãos de neve" },
+        80: { day: "wi-showers", night: "wi-night-alt-showers", text: "Pancadas leves" },
+        81: { day: "wi-rain", night: "wi-night-alt-rain", text: "Pancadas moderadas" },
+        82: { day: "wi-rain-wind", night: "wi-night-alt-rain-wind", text: "Pancadas fortes" },
+        85: { day: "wi-snow", night: "wi-night-alt-snow", text: "Pancadas leves de neve" },
+        86: { day: "wi-snow-wind", night: "wi-night-alt-snow-wind", text: "Pancadas fortes de neve" },
+        95: { day: "wi-thunderstorm", night: "wi-night-alt-thunderstorm", text: "Trovoadas" },
+        96: { day: "wi-storm-showers", night: "wi-night-alt-storm-showers", text: "Trovoadas com granizo leve" },
+        99: { day: "wi-storm-showers", night: "wi-night-alt-storm-showers", text: "Trovoadas com granizo forte" },
+      };
 
-        const weatherInfo = weatherMap[code] || {
-          text: "Condição desconhecida",
-          icon: "wi-na",
-        };
+      // Função para definir se é dia ou noite
+      const isDay = horaConsulta.getHours() >= 6 && horaConsulta.getHours() < 18;
+
+        const weatherInfo = weatherMap[code]
+        ? { text: weatherMap[code].text, icon: isDay ? weatherMap[code].day : weatherMap[code].night }
+        : { text: "Condição desconhecida", icon: "wi-na" };
 
         cityName.textContent = dados.city;
         temperature.textContent = `Temperatura: ${temp}°C`;
@@ -207,10 +228,9 @@ if (typeof document !== "undefined") {
           });
 
           const weatherCode = dia.weathercode;
-          const condition = weatherMap[weatherCode] || {
-            text: "Condição desconhecida",
-            icon: "wi-na",
-          };
+          const condition = weatherMap[weatherCode]
+          ? { text: weatherMap[weatherCode].text, icon: isDay ? weatherMap[weatherCode].day : weatherMap[weatherCode].night }
+          : { text: "Condição desconhecida", icon: "wi-na" };
 
           const div = document.createElement("div");
           div.classList.add("forecast-day");
