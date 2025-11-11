@@ -14,8 +14,10 @@ A aplicação permite consultar dados meteorológicos, tratar diferentes cenári
 
 ## ⚙️ Funcionalidades
 
-- 🔍 Busca de dados meteorológicos por nome de cidade.  
-- ⚠️ Tratamento de erros para entradas inválidas, limite de requisições, formato inesperado ou falhas de rede.  
+- 🔍 **Busca de dados meteorológicos** por nome de cidade, com integração à API pública do **Open-Meteo**.
+- 🌡️ **Exibição completa das condições atuais**, incluindo temperatura, umidade relativa do ar, velocidade do vento e precipitação.
+- 📅 **Previsão** detalhada para os **próximos 5 dias**, com informações de máxima, mínima, vento, umidade média e chuva acumulada.
+- ⚠️ **Tratamento de erros** para entradas inválidas, limite de requisições, formato inesperado ou falhas de rede.  
 - 🕒 Exibição da **data e hora completa da consulta**.  
 - 🌗 Alternância automática entre **modo diurno e noturno** conforme o horário.  
 - 🌤️ Exibição de **ícones de clima** com a biblioteca [Weather Icons](https://erikflowers.github.io/weather-icons/).  
