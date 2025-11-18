@@ -188,7 +188,7 @@ if (typeof document !== "undefined") {
         : { text: "Condição desconhecida", icon: "wi-na" };
 
         cityName.textContent = dados.city;
-        temperature.textContent = `Temperatura: ${temp}°C`;
+        temperature.textContent = `${temp}`;
         conditions.textContent = weatherInfo.text;
         weatherIcon.className = `wi ${weatherInfo.icon}`;
 
@@ -235,13 +235,19 @@ if (typeof document !== "undefined") {
           const div = document.createElement("div");
           div.classList.add("forecast-day");
           div.innerHTML = `
-            <p class="forecast-date">${nomeDia}, ${dataCurta}</p>
-            <i class="wi ${condition.icon}"></i>
-            <p><strong>Máx:</strong> ${dia.max}°C</p>
-            <p><strong>Mín:</strong> ${dia.min}°C</p>
-            <p>💧 ${dia.humidity_avg}</p>
-            <p>🌬️ ${dia.wind_max}</p>
-            <p>☔ ${dia.precipitation}</p>
+            <div class="detail-item-forecast">
+              <p class="forecast-date">${nomeDia}, ${dataCurta}</p>
+              <i class="wi ${condition.icon}"></i>
+              <p class="center">${condition.text}</p>
+              <div class="row">
+                <p><strong>Máx:</strong> ${dia.max} °C</p>
+                <p><strong>Mín:</strong> ${dia.min} °C</p>
+              </div>
+              <div class="row">
+                <p><i class="wi wi-strong-wind forecast-icon"></i> ${dia.wind_max}</p>
+                <p><i class="wi wi-raindrops forecast-icon"></i> ${dia.precipitation}</p>
+              </div>
+            </div>
           `;
           forecastContainer.appendChild(div);
         });

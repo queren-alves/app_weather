@@ -465,7 +465,7 @@ body.night .main-weather-card {
 }
 
 .weather-visual #weather-icon {
-  font-size: 8rem; /* ajuste livremente, ex: 4rem, 8rem */
+  font-size: 8rem;
   line-height: 1;
   display: inline-block;
   vertical-align: middle;
@@ -484,7 +484,7 @@ body.night .main-weather-card {
 }
 
 .temperature-value {
-  font-size: 5rem;
+  font-size: 4rem;
   font-weight: 800;
   line-height: 1;
   letter-spacing: -2px;
@@ -494,6 +494,20 @@ body.night .main-weather-card {
   font-size: 2.5rem;
   font-weight: 600;
   opacity: 0.7;
+  margin-top: 0.5rem;
+}
+
+.before-temperature {
+  font-size: 2rem;
+  font-weight: 600;
+  opacity: 0.7;
+  margin-top: 0.5rem;
+}
+
+.unit {
+  font-size: 2rem;
+  line-height: 0.5;
+  font-weight: 600;
   margin-top: 0.5rem;
 }
 
@@ -521,13 +535,38 @@ body.night .main-weather-card {
   transition: var(--transition-smooth);
 }
 
-.detail-item:hover {
+.detail-item-forecast {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  transition: var(--transition-smooth);
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.center {
+  text-align: center;
+}
+
+.detail-item:hover, .detail-item-forecast:hover {
   background: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
 }
 
 .detail-icon {
   font-size: 2rem;
+  opacity: 0.8;
+}
+
+.forecast-icon {
+  font-size: 1rem;
   opacity: 0.8;
 }
 
